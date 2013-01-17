@@ -1,6 +1,13 @@
+![Build Status](https://travis-ci.org/bengourley/node-stylus-renderer.png?branch=master)
+
+
+## Install:
+
 ```
 npm install stylus-renderer
 ```
+
+## Usage:
 
 ```js
 var render = require('stylus-renderer')
