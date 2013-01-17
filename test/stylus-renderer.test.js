@@ -7,7 +7,9 @@ var assert = require('assert')
 describe('render()', function () {
 
   before(function (done) {
-    fs.unlink(join(__dirname, 'fixtures', 'a.css'), done)
+    fs.unlink(join(__dirname, 'fixtures', 'a.css'), function () {
+      done()
+    })
   })
 
   it('should render a single stylus file', function (done) {
