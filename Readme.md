@@ -1,13 +1,14 @@
-![Build Status](https://travis-ci.org/bengourley/node-stylus-renderer.png?branch=master)
+[![Build Status](https://travis-ci.org/bengourley/node-stylus-renderer.png?branch=master)](https://travis-ci.org/bengourley/node-stylus-renderer)
 
+Render batches of Stylus files with custom settings.
 
-## Install:
+## Install
 
 ```
 npm install stylus-renderer
 ```
 
-## Usage:
+## Usage
 
 ```js
 var render = require('stylus-renderer')
@@ -25,7 +26,8 @@ var render = require('stylus-renderer')
 
 Eg:
 ```js
-render(['index.styl'], { stylusOptions: { compress: 'true' } }, function () {
+render(['index.styl'], { stylusOptions: { compress: 'true' } }, function (err) {
+  if (err) throw err
   console.log('done!')
 })
 ```
