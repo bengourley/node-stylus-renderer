@@ -1,65 +1,90 @@
 module.exports = render
 
 var stylus = require('stylus')
-  , nib = require('nib')
   , fs = require('fs')
   , relative = require('path').relative
   , join = require('path').join
-  , defaultLogger =
-    { debug: console.log
-    , info: console.log
-    , warn: console.log
-    , error: console.log
-    }
+  , Emitter = require('events').EventEmitter
+
+try {
+  var nib = require('nib')
+} catch (e) {
+  // No nib :(
+}
 
 function render(stylesheets, options, cb) {
 
-  var src = options.src || process.env.PWD
-    , dest = options.dest || src
-    , stylusOptions = options.stylusOptions || {}
-    , logger = options.logger || defaultLogger
-
   if (!Array.isArray(stylesheets)) stylesheets = [ stylesheets ]
 
-  var count = stylesheets.length
+  var src = options.src || process.env.PWD
+    , dest = options.dest || src
+    , emitter = new Emitter()
     , errored = false
+    , count = stylesheets.length
+    , compile
 
-  logger.debug('Found ' + count + ' stylesheet(s)')
+  if (typeof options.compile === 'function') {
+    compile = options.compile
+  } else {
+    compile = defaultCompile(options.stylusOptions)
+  }
+
+  emitter.emit('log', 'Found ' + count + ' stylesheet(s)', 'debug')
 
   function complete(err) {
-    if (err && err.name === 'ParseError') {
-      logger.error(err.message)
-    } else if (err) {
+    if (err) {
       errored = true
       return cb(err)
     }
     if (--count === 0 && !errored) cb()
   }
-  stylesheets.forEach(function (file) {
-    logger.debug('Compiling ' + file)
-    if (file.indexOf('/') === 0) file = relative(src, file)
-    compileFile(join(src, file), join(dest, file), stylusOptions, complete)
+
+  process.nextTick(function () {
+    stylesheets.forEach(function (file) {
+      emitter.emit('log', 'Compiling ' + file, 'debug')
+      if (file.indexOf('/') === 0) file = relative(src, file)
+      compileFile(join(src, file), join(dest, file), compile, complete)
+    })
   })
+
+  return emitter
 
 }
 
-function compile(str, options, path) {
-  var c = stylus(str)
-    .use(nib())
-    .set('filename', path)
-  Object.keys(options).forEach(function (key) {
-    c.set(key, options[key])
-  })
-  return c
+/*
+ * Create a default compile function
+ * with just an options hash for
+ * convenience.
+ */
+function defaultCompile(options) {
+  return function (str, src) {
+
+    var c = stylus(str)
+      // Set the filename for better debugging
+      .set('filename', src)
+
+    // Use nib if it exists
+    if (nib) c.use(nib())
+
+    // If any options exist, set them
+    if (options) {
+      Object.keys(options).forEach(function (key) {
+        c.set(key, options[key])
+      })
+    }
+
+    return c
+
+  }
 }
 
-function compileFile(src, dest, options, cb) {
-  fs.readFile(src + '.styl', 'utf8', function(err, str) {
+function compileFile(src, dest, compile, cb) {
+  fs.readFile(src, 'utf8', function(err, str) {
     if (err) throw err
-    var style = compile(str, options, src)
+    var style = compile(str, src)
     style.render(function (err, css) {
       if (err) return cb(err)
-      writeFile(dest + '.css', css, function(error) {
+      writeFile(dest.replace(/\.\w+$/, '.css'), css, function(error) {
         if (error) return cb(error)
         cb(null)
       })

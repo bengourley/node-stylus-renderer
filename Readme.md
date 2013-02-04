@@ -1,6 +1,14 @@
 [![Build Status](https://travis-ci.org/bengourley/node-stylus-renderer.png?branch=master)](https://travis-ci.org/bengourley/node-stylus-renderer)
 
-Render batches of Stylus files with custom settings.
+Render batches of Stylus files. This module expects stylus to be available via
+`require('stylus')` where it is run. This is so that you can use whatever version
+of stylus you want to.
+
+It provides a default compile function that requires 'nib'. You can customise this
+by passing in `stylus` options. Otherwise, a completely custom compile function can
+be passed in.
+
+The render function returns an event emitter so you can listen for log events.
 
 ## Install
 
@@ -20,8 +28,8 @@ var render = require('stylus-renderer')
 - `options` is an options hash
   - `src` the source directory, defaults to PWD
   - `dest` the destination directory, defaults to PWD
-  - `logger` a custom logger object, defaults to console.log
   - `stylusOptions` hash of options to pass though to stylus
+  - `compile` a custom compile function. If `compile` is set, `stylusOptions` will have no effect.
 - `cb` is the callback `function (err) {}` (`err` is null if ok)
 
 Eg:
@@ -29,5 +37,7 @@ Eg:
 render(['index.styl'], { stylusOptions: { compress: 'true' } }, function (err) {
   if (err) throw err
   console.log('done!')
+}).on('log', function (msg, level) {
+  console.log(level + ': ' + msg)
 })
 ```
