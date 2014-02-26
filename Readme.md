@@ -29,7 +29,7 @@ var render = require('stylus-renderer')
 - `options` is an options hash
   - `src` the source directory, defaults to PWD
   - `dest` the destination directory, defaults to PWD
-  - `use` an optional plugin, such as Nib
+  - `use` an optional plugin, such as Nib. Also accepts an array of plugins
   - `stylusOptions` hash of options to pass though to stylus
   - `compile` a custom compile function. If `compile` is set, `stylusOptions` will have no effect.
 - `cb` is the callback `function (err) {}` (`err` is null if ok)

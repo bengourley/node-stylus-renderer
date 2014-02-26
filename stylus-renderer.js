@@ -13,7 +13,7 @@ function render(stylesheets, options, cb) {
 
   var src = options.src || process.env.PWD
     , dest = options.dest || src
-    , use = options.use || null
+    , uses = options.use || null
     , emitter = new Emitter()
     , errored = false
     , count = stylesheets.length
@@ -22,7 +22,7 @@ function render(stylesheets, options, cb) {
   if (typeof options.compile === 'function') {
     compile = options.compile
   } else {
-    compile = defaultCompile(options.stylusOptions, use)
+    compile = defaultCompile(options.stylusOptions, uses)
   }
 
   emitter.emit('log', 'Found ' + count + ' stylesheet(s)', 'debug')
@@ -52,15 +52,18 @@ function render(stylesheets, options, cb) {
  * with just an options hash for
  * convenience.
  */
-function defaultCompile(options, use) {
+function defaultCompile(options, uses) {
   return function (str, src) {
 
     var c = stylus(str)
       // Set the filename for better debugging
       .set('filename', src)
 
-    // Use Custom plugin if supplied
-    if (use) c.use(use)
+    // Use Custom plugins if supplied
+    if(uses && !Array.isArray(uses)) uses = [ uses ]
+    uses.forEach(function (use) {
+      c.use(use)
+    })
 
     // If any options exist, set them
     if (options) {
