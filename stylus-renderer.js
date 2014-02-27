@@ -60,10 +60,12 @@ function defaultCompile(options, uses) {
       .set('filename', src)
 
     // Use Custom plugins if supplied
-    if(uses && !Array.isArray(uses)) uses = [ uses ]
-    uses.forEach(function (use) {
-      c.use(use)
-    })
+    if (uses) {
+      if (!Array.isArray(uses)) uses = [ uses ]
+      uses.forEach(function (use) {
+        c.use(use)
+      })
+    }
 
     // If any options exist, set them
     if (options) {
