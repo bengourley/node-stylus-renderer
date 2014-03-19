@@ -1,6 +1,6 @@
 {
   "name": "stylus-renderer",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Render a collection of stylus files from one place to another",
   "main": "stylus-renderer.js",
   "scripts": {
