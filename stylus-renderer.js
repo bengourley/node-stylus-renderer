@@ -6,11 +6,6 @@ var stylus = require('stylus')
   , join = require('path').join
   , Emitter = require('events').EventEmitter
 
-try {
-  var nib = require('nib')
-} catch (e) {
-  // No nib :(
-}
 
 function render(stylesheets, options, cb) {
 
@@ -18,6 +13,7 @@ function render(stylesheets, options, cb) {
 
   var src = options.src || process.env.PWD
     , dest = options.dest || src
+    , uses = options.use || null
     , emitter = new Emitter()
     , errored = false
     , count = stylesheets.length
@@ -26,7 +22,7 @@ function render(stylesheets, options, cb) {
   if (typeof options.compile === 'function') {
     compile = options.compile
   } else {
-    compile = defaultCompile(options.stylusOptions)
+    compile = defaultCompile(options.stylusOptions, uses)
   }
 
   emitter.emit('log', 'Found ' + count + ' stylesheet(s)', 'debug')
@@ -56,15 +52,20 @@ function render(stylesheets, options, cb) {
  * with just an options hash for
  * convenience.
  */
-function defaultCompile(options) {
+function defaultCompile(options, uses) {
   return function (str, src) {
 
     var c = stylus(str)
       // Set the filename for better debugging
       .set('filename', src)
 
-    // Use nib if it exists
-    if (nib) c.use(nib())
+    // Use Custom plugins if supplied
+    if (uses) {
+      if (!Array.isArray(uses)) uses = [ uses ]
+      uses.forEach(function (use) {
+        c.use(use)
+      })
+    }
 
     // If any options exist, set them
     if (options) {
