@@ -4,7 +4,7 @@ Render batches of Stylus files. This module expects stylus to be available via
 `require('stylus')` where it is run. This is so that you can use whatever version
 of stylus you want to.
 
-It provides a default compile function which cab be customised by passing in 
+It provides a default compile function which can be customised by passing in 
 `stylus` options. Otherwise, a completely custom compile function can be passed in.
 
 To use [Nib](https://github.com/visionmedia/nib) or [Autoprefixer Stylus](https://github.com/jenius/autoprefixer-stylus), pass a custom `use` function.
@@ -30,6 +30,7 @@ var render = require('stylus-renderer')
   - `src` the source directory, defaults to PWD
   - `dest` the destination directory, defaults to PWD
   - `use` an optional plugin, such as Nib. Also accepts an array of plugins
+  - `define` pass JavaScript-defined functions or global variables to stylus as an array of objects
   - `stylusOptions` hash of options to pass though to stylus
   - `compile` a custom compile function. If `compile` is set, `stylusOptions` will have no effect.
 - `cb` is the callback `function (err) {}` (`err` is null if ok)
