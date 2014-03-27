@@ -14,6 +14,7 @@ function render(stylesheets, options, cb) {
   var src = options.src || process.env.PWD
     , dest = options.dest || src
     , uses = options.use || null
+    , defines = options.define || null
     , emitter = new Emitter()
     , errored = false
     , count = stylesheets.length
@@ -22,7 +23,7 @@ function render(stylesheets, options, cb) {
   if (typeof options.compile === 'function') {
     compile = options.compile
   } else {
-    compile = defaultCompile(options.stylusOptions, uses)
+    compile = defaultCompile(options.stylusOptions, uses, defines)
   }
 
   emitter.emit('log', 'Found ' + count + ' stylesheet(s)', 'debug')
@@ -52,7 +53,7 @@ function render(stylesheets, options, cb) {
  * with just an options hash for
  * convenience.
  */
-function defaultCompile(options, uses) {
+function defaultCompile(options, uses, defines) {
   return function (str, src) {
 
     var c = stylus(str)
@@ -64,6 +65,16 @@ function defaultCompile(options, uses) {
       if (!Array.isArray(uses)) uses = [ uses ]
       uses.forEach(function (use) {
         c.use(use)
+      })
+    }
+
+    // Use custom defines
+    if (defines) {
+      if (!Array.isArray(defines)) defines = [ defines ]
+      defines.forEach(function (define) {
+        Object.keys(define).forEach(function (key) {
+          c.define(key, define[key])
+        })
       })
     }
 

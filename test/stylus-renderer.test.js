@@ -39,7 +39,6 @@ describe('render()', function () {
   })
 
   it('should allow a custom compile function', function (done) {
-    var logs = 0
     render(['a.styl'],
       { src: join(__dirname, 'fixtures')
       , compile: function () { return { render: function (cb) { cb(null, 'CUSTOM!') } } }
@@ -54,7 +53,6 @@ describe('render()', function () {
   })
 
   it('should allow configurable stylus options', function (done) {
-    var logs = 0
     render(['a.styl'],
       { src: join(__dirname, 'fixtures')
       , stylusOptions: { linenos: true }
@@ -63,6 +61,34 @@ describe('render()', function () {
         fs.readFile(join(__dirname, 'fixtures', 'a.css'), function (err, data) {
           assert(!err)
           assert(/\/\* line \d/.test(data))
+          done()
+        })
+      })
+  })
+
+  it('should allow a single `define` node to be passed', function (done) {
+    render(['a.styl'],
+      { src: join(__dirname, 'fixtures')
+      , define: { 'foo': 'bar' }
+      }, function (err) {
+        assert(!err)
+        fs.readFile(join(__dirname, 'fixtures', 'a.css'), function (err, data) {
+          assert(!err)
+          assert(/display: block;/.test(data))
+          done()
+        })
+      })
+  })
+
+  it('should allow an array of `define` nodes to be passed', function (done) {
+    render(['a.styl'],
+      { src: join(__dirname, 'fixtures')
+      , define: [ {'bar': 'baz'}, { 'add1': function(a){return parseInt(a,10)+1} } ]
+      }, function (err) {
+        assert(!err)
+        fs.readFile(join(__dirname, 'fixtures', 'a.css'), function (err, data) {
+          assert(!err)
+          assert(/z-index: 1;/.test(data))
           done()
         })
       })
