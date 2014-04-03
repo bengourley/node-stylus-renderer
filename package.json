@@ -3,6 +3,17 @@
   "version": "1.0.0",
   "description": "Render a collection of stylus files from one place to another",
   "main": "stylus-renderer.js",
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:bengourley/node-stylus-renderer.git"
+  },
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/bengourley/node-stylus-renderer/issues"
+  },
   "scripts": {
     "test": "./node_modules/.bin/mocha test"
   },
@@ -10,7 +21,5 @@
     "stylus": "*",
     "mocha": "~1"
   },
-  "repository": "",
-  "author": "Ben Gourley",
-  "license": "BSD"
+  "author": "Ben Gourley"
 }

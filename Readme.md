@@ -4,7 +4,7 @@ Render batches of Stylus files. This module expects stylus to be available via
 `require('stylus')` where it is run. This is so that you can use whatever version
 of stylus you want to.
 
-It provides a default compile function which can be customised by passing in 
+It provides a default compile function which can be customised by passing in
 `stylus` options. Otherwise, a completely custom compile function can be passed in.
 
 To use [Nib](https://github.com/visionmedia/nib) or [Autoprefixer Stylus](https://github.com/jenius/autoprefixer-stylus), pass a custom `use` function.
@@ -44,3 +44,6 @@ render(['index.styl'], { use: nib(), stylusOptions: { compress: 'true' } }, func
   console.log(level + ': ' + msg)
 })
 ```
+
+## Licence
+Licensed under the [New BSD License](http://opensource.org/licenses/bsd-license.php)
