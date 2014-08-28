@@ -41,6 +41,30 @@ describe('render()', function () {
       })
   })
 
+  it('should render a multiple stylus files', function (done) {
+    render([ 'a.styl', 'b.styl' ] ,
+      { src: join(__dirname, 'fixtures')
+      , dest: join(__dirname, 'output')
+      , stylusOptions: { compress: 'true' }
+      } , function (err) {
+        assert(!err)
+        async.each(
+          [ join(__dirname, 'output', 'a.css')
+          , join(__dirname, 'output', 'b.css')
+          ]
+          , function(file, cb) {
+              fs.exists(file, function(exists) {
+                if (!exists) return cb('File does not exist: ' + file)
+                cb()
+              })
+            }
+          , function(err) {
+              if (err) return done(new Error(err))
+              done()
+            })
+      })
+  })
+
   it('should emit log events', function (done) {
     var logs = 0
     render([ 'a.styl' ],
