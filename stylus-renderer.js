@@ -6,7 +6,6 @@ var stylus = require('stylus')
   , join = require('path').join
   , Emitter = require('events').EventEmitter
 
-
 function render(stylesheets, options, cb) {
 
   if (!Array.isArray(stylesheets)) stylesheets = [ stylesheets ]
@@ -96,16 +95,28 @@ function compileFile(src, dest, compile, cb) {
     var style = compile(str, src)
     style.render(function (err, css) {
       if (err) return cb(err)
+
+      // Write CSS file
       writeFile(dest.replace(/\.\w+$/, '.css'), css, function(error) {
         if (error) return cb(error)
-        cb(null)
+
+        if (!style.sourcemap || style.options.sourcemap.inline === true) return cb(null)
+
+        // Write Sourcemap
+        var sourcemap = JSON.stringify(style.sourcemap)
+        writeFile(dest.replace(/\.\w+$/, '.css.map'), sourcemap, function(error) {
+          if (error) return cb(error)
+          cb(null)
+        })
+
       })
+
     })
   })
 }
 
-function writeFile(file, css, callback) {
-  fs.writeFile(file, css, function (err) {
+function writeFile(file, data, callback) {
+  fs.writeFile(file, data, function (err) {
     if (err) return callback(err)
     callback(undefined, file)
   })
