@@ -2,14 +2,28 @@ var assert = require('assert')
   , join = require('path').join
   , fs = require('fs')
   , render = require('..')
-  , noop = function () {}
+  , rimraf = require('rimraf')
+  , async = require('async')
 
 describe('render()', function () {
 
   beforeEach(function (done) {
-    fs.unlink(join(__dirname, 'fixtures', 'a.css'), function () {
-      done()
-    })
+    async.waterfall(
+      [ function (cb) {
+          fs.exists(join(__dirname, 'output'), function (exists) {
+            cb(null, exists)
+          })
+        }
+      , function (exists, cb) {
+          if (!exists) return cb(null)
+
+          rimraf(join(__dirname, 'output'), cb)
+        }
+      ]
+      , function() {
+        fs.mkdir(join(__dirname, 'output'), done)
+      }
+    )
   })
 
   it('should render a single stylus file', function (done) {
@@ -94,8 +108,48 @@ describe('render()', function () {
       })
   })
 
+  it('should render a single stylus file and external sourcemap', function (done) {
+    render([ 'a.styl' ],
+      { src: join(__dirname, 'fixtures')
+      , dest: join(__dirname, 'output')
+      , stylusOptions:
+        { compress: 'true'
+        , sourcemap: { comment: true }
+        }
+      }, function (err) {
+        assert(!err)
+        fs.readFile(join(__dirname, 'output', 'a.css.map'), function (err, data) {
+          assert(!err)
+          assert(data.length > 1)
+          done()
+        })
+      })
+  })
+
+  it('should render a single stylus with inline sourcemap', function (done) {
+    render([ 'a.styl' ],
+      { src: join(__dirname, 'fixtures')
+      , dest: join(__dirname, 'output')
+      , stylusOptions:
+        { compress: 'true'
+        , sourcemap: { inline: true }
+        }
+      }, function (err) {
+        assert(!err)
+        fs.readFile(join(__dirname, 'output', 'a.css'), function (err, data) {
+          assert(!err)
+          assert(/sourceMappingURL/.test(data))
+          // Check no external sourcemap file was generated
+          fs.exists(join(__dirname, 'output', 'a.css.map'), function(exists) {
+            assert(!exists)
+            done()
+          })
+        })
+      })
+  })
+
   afterEach(function (done) {
-    fs.unlink(join(__dirname, 'fixtures', 'a.css'), done)
+    rimraf(join(__dirname, 'output'), done)
   })
 
 })

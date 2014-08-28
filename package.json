@@ -4,11 +4,13 @@
   "description": "Render a collection of stylus files from one place to another",
   "main": "stylus-renderer.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test"
+    "test": "./node_modules/.bin/mocha test --reporter spec"
   },
   "devDependencies": {
-    "stylus": "*",
-    "mocha": "~1"
+    "async": "^0.9.0",
+    "mocha": "~1",
+    "rimraf": "^2.2.8",
+    "stylus": "^0.48.1"
   },
   "repository": "",
   "author": "Ben Gourley",
