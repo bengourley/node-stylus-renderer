@@ -7,10 +7,10 @@
     "test": "./node_modules/.bin/mocha test --reporter spec"
   },
   "devDependencies": {
-    "async": "^0.9.0",
+    "async": "~0.9.0",
     "mocha": "~1",
-    "rimraf": "^2.2.8",
-    "stylus": "^0.48.1"
+    "rimraf": "~2.2.8",
+    "stylus": "~0.48.1"
   },
   "repository": "",
   "author": "Ben Gourley",
