@@ -15,11 +15,13 @@
     "url": "https://github.com/bengourley/node-stylus-renderer/issues"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha test"
+    "test": "./node_modules/.bin/mocha test --reporter spec"
   },
   "devDependencies": {
-    "stylus": "*",
-    "mocha": "~1"
+    "async": "~0.9.0",
+    "mocha": "~1",
+    "rimraf": "~2.2.8",
+    "stylus": "~0.48.1"
   },
   "author": "Ben Gourley"
 }
